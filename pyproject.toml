@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0", "requests", ]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyCZDS"
+version = "1.0"
+authors = [
+  { name="Max M. Diez", email="pyczds@xdiez.com" },
+]
+description = "An API client for ICANN's Centralized Zone Data Service (CDZS). Learn more under https://czds.icann.org/."
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Operating System :: OS Independent",
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Topic :: Internet :: Name Service (DNS)",
+    "Topic :: Software Development :: Libraries",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/mdiez/pyCZDS"
+"Bug Tracker" = "https://github.com/mdiez/pyCZDS/issues"
