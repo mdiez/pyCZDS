@@ -5,7 +5,7 @@ This repository hosts the source code for the respective Python package which ca
 ## Installation
 
 This package requires Python 3 and has been tested with Python 3.10.8. It requires the `requests` package.
-The library implements the API against the official documentation which can be found under this [link](https://github.com/icann/czds-api-client-java/blob/master/docs/ICANN_CZDS_api.pdf).
+The library implements a client against the official API documentation which can be found under this [link](https://github.com/icann/czds-api-client-java/blob/master/docs/ICANN_CZDS_api.pdf).
 
 Install pyCZDS with the command `pip install pyCZDS`.
 
@@ -16,7 +16,7 @@ The library supports the following actions:
 * `client.download_zonefile` – download a specified zonefile.
 
 ### Instantiating a client
-Use the following code to create a new client:
+Use the following code to create a new `CZDSClient` object:
 ```
 from pyczds.client import CZDSClient
 
@@ -24,10 +24,10 @@ from pyczds.client import CZDSClient
 c = CZDSClient(username, password)
 ```
 
-The client handles the authorization against the API transparently. It will log in with the first call of any method, and will retain the acquired token for subsequent requests. When the token expires, it will renew the authentication automatically.
+The client handles the authentication with the API transparently. It will authenticate with the first call of any method, and will retain the acquired token for subsequent requests. When the token expires, it will renew the authentication automatically.
 
 ### Getting zonefile download links
-The following command will retrieve a list of all zonefiles your account is authorized to access. It returns a `list` with the respective URLs.
+The following command will retrieve a list of all zonefiles the account is authorized to access. It returns a `list` with the respective URLs.
 
 ```
 print(c.get_zone_download_links())
