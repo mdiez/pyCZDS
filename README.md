@@ -1,6 +1,14 @@
 # pyCZDS – An API client for ICANN's Centralized Zone Data Service (CZDS)
 
-This repository hosts the source code for the respective Python package which can be found on [PyPI](https://pypi.org/project/pyCZDS/).
+*This package allows you to seamlessly interact with ICANN's CZDS and download zonefiles for participating Top-Level Domains.*
+
+> The Centralized Zone Data Service (CZDS) is an online portal where any interested party can request access to the Zone Files provided by participating generic Top-Level Domains (gTLDs).
+
+[Source](https://czds.icann.org/home)
+
+Relevant links:
+* pyCZDS on [PyPI](https://pypi.org/project/pyCZDS/)
+* pyCDZS repo on [GitHub](https://github.com/mdiez/pyCZDS)
 
 ## Installation
 
@@ -69,7 +77,7 @@ Should you encounter errors, a good first step is to increase the logging level 
 ```
 import logging
 
-from pycdzs import client
+from pyczds import client
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -97,6 +105,6 @@ class TestPyCZDS(unittest.TestCase):
 I am a hobby enthusiast and am neither affiliated with ICANN, nor is this library endorsed by ICANN.
 
 ## Links and further information
-* [CDZS – Login](https://czds.icann.org/)
+* [CZDS – Login](https://czds.icann.org/)
 * [CZDS – Help](https://czds.icann.org/help)
 * [CZDS – Request access to additional hostfiles](https://czds.icann.org/zone-request/add)

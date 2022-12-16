@@ -2,6 +2,7 @@ import random
 import logging
 import os
 import tempfile
+import cgi
 
 from test_pyczds import TestPyCZDS
 
@@ -26,39 +27,57 @@ class TestClient(TestPyCZDS):
         self.assertGreater(int(head['content-length']), 0)
         self.assertEqual(head['content-type'], 'application/x-gzip')
 
-    def download_smallest_zonefile(self, download_dir=''):
+    def download_smallest_zonefile(self, download_dir='', filename=''):
         zonefile_link_list = self.client.get_zone_download_links()
-        smallest_file = tuple()
+        smallest_file_size = int()
+        smallest_file_url = str()
+        smallest_file_filename = str()
 
         for link in zonefile_link_list:
             head = self.client.head_zonefile(link)
-            if len(smallest_file) == 0 or smallest_file[0] > int(head['Content-Length']):
-                smallest_file = (int(head['Content-Length']), link, head['Content-Disposition'].split('=')[1])
+            if smallest_file_size == 0 or int(head['Content-Length']) < smallest_file_size:
+                value, params = cgi.parse_header(head['Content-Disposition'])
+                smallest_file_size = int(head['Content-Length'])
+                smallest_file_url = link
+                smallest_file_filename = params['filename']
 
         logging.debug(
-            'Identified {} as smallest file with {} bytes to download.'.format(smallest_file[0], smallest_file[2])
+            'Identified {} as smallest file with {} bytes to download.'.format(smallest_file_url, smallest_file_size)
         )
 
-        self.client.get_zonefile(smallest_file[1], download_dir)
-
-        if download_dir == '':
-            filepath = os.path.join(os.getcwd(), smallest_file[2])
+        if len(filename) > 0:
+            local_filename = filename
         else:
-            filepath = os.path.join(download_dir, smallest_file[2])
+            local_filename = smallest_file_filename
+
+        self.client.get_zonefile(smallest_file_url, download_dir, local_filename)
+
+        if len(download_dir) > 0:
+            filepath = os.path.join(download_dir, local_filename)
+        else:
+            filepath = os.path.join(os.getcwd(), local_filename)
 
         filesize = os.stat(filepath)
 
-        self.assertEqual(smallest_file[0], filesize.st_size)
+        self.assertEqual(smallest_file_size, filesize.st_size)
 
-        logging.debug('Removing downloaded file from {}.'.format(filepath))
+        logging.debug('Removing downloaded file {} from {}.'.format(local_filename, filepath))
 
         os.remove(filepath)
 
     def test_download_smallest_zonefile_default_directory_online(self):
         self.download_smallest_zonefile()
 
+    def test_download_smallest_zonefile_other_filename_online(self):
+        with tempfile.TemporaryDirectory() as d:
+            self.download_smallest_zonefile(filename='test_zonefile.tmp')
+
     def test_download_smallest_zonefile_other_directory_online(self):
         with tempfile.TemporaryDirectory() as d:
             self.download_smallest_zonefile(d)
+
+    def test_download_smallest_zonefile_other_directory_other_filename_online(self):
+        with tempfile.TemporaryDirectory() as d:
+            self.download_smallest_zonefile(d, 'test_zonefile.tmp')
 
     # endregion

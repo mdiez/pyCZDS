@@ -8,7 +8,7 @@ version = "1.0.1"
 authors = [
   { name="Max M. Diez", email="pyczds@xdiez.com" },
 ]
-description = "An API client for ICANN's Centralized Zone Data Service (CDZS). Learn more under https://czds.icann.org/."
+description = "An API client for ICANN's Centralized Zone Data Service (CZDS). Learn more under https://czds.icann.org/."
 readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [

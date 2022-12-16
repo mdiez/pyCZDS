@@ -24,7 +24,7 @@ class CZDSClient(CZDSAuthentication):
         headers = {
             'Authorization': 'Bearer {}'.format(self._token),
             'User-Agent': '{} / {}'.format(
-                metadata.distribution('pyczds').name, metadata.distribution('pyczds').version
+                metadata.distribution('pyCZDS').name, metadata.distribution('pyCZDS').version
             )
         }
 
@@ -54,15 +54,15 @@ class CZDSClient(CZDSAuthentication):
 
         return headers
 
-    def get_zonefile(self, zonefile_link, download_dir=''):
+    def get_zonefile(self, zonefile_link, download_dir='', filename=''):
         if not download_dir or (download_dir and len(download_dir) == 0):
             download_dir = os.getcwd()
 
         url_parsed = urlparse(zonefile_link)
-        filename = unquote(os.path.basename(url_parsed.path))
+        remote_filename = unquote(os.path.basename(url_parsed.path))
 
         logging.debug('About to start download for zonefile {} to directory {}.'.format(
-            filename, download_dir)
+            remote_filename, download_dir)
         )
 
         with self._do_request('get', zonefile_link, stream=True) as response:
@@ -72,19 +72,24 @@ class CZDSClient(CZDSAuthentication):
                     'Received unexpected value in Content-Disposition header: {}.'.format(
                         response.headers['Content-Disposition'])
                 )
-            if 'filename' not in params.keys():
-                raise ValueError(
-                    'No filename passed in Content-Disposition header: {}.'.format(
-                        response.headers['Content-Disposition'])
-                )
 
-            filename = params['filename']
+            if not filename or (filename and len(filename) == 0):
+                if 'filename' not in params.keys():
+                    raise ValueError(
+                        'No filename passed in Content-Disposition header: {}.'.format(
+                            response.headers['Content-Disposition'])
+                    )
+
+                local_filename = params['filename']
+            else:
+                local_filename = filename
+
             filepath = os.path.join(download_dir, filename)
 
             logging.debug('Streaming file to {}.'.format(filepath))
 
             with open(filepath, 'wb') as f:
-                for chunk in response.iter_content(chunk_size=8192):
+                for chunk in response.iter_content(chunk_size=2**19):
                     f.write(chunk)
 
             logging.debug('Completed download of zonefile {}.'.format(filepath))

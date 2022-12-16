@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: pyCZDS
-Version: 1.0
+Version: 1.0.1
 Summary: An API client for ICANN's Centralized Zone Data Service (CDZS). Learn more under https://czds.icann.org/.
 Author-email: "Max M. Diez" <pyczds@xdiez.com>
 Project-URL: Homepage, https://github.com/mdiez/pyCZDS
@@ -18,7 +18,15 @@ License-File: LICENSE
 
 # pyCZDS – An API client for ICANN's Centralized Zone Data Service (CZDS)
 
-This repository hosts the source code for the respective Python package which can be found on [PyPI]().
+*This package allows you to seamlessly interact with ICANN's CZDS and download zonefiles for participating Top-Level Domains.*
+
+> The Centralized Zone Data Service (CZDS) is an online portal where any interested party can request access to the Zone Files provided by participating generic Top-Level Domains (gTLDs).
+
+[Source](https://czds.icann.org/home)
+
+Relevant links:
+* pyCZDS on [PyPI](https://pypi.org/project/pyCZDS/)
+* pyCDZS repo on [GitHub](https://github.com/mdiez/pyCZDS)
 
 ## Installation
 
@@ -31,7 +39,7 @@ Install pyCZDS with the command `pip install pyCZDS`.
 The library supports the following actions:
 * `client.get_zone_download_links` – retrieves the download links all zonefiles the respective account is authorized to access;
 * `client.head_zonefile` – retrieves the headers for a specified zonefile, which contain metadata such as the last modified timestamp and the file's size;
-* `client.download_zonefile` – download a specified zonefile.
+* `client.get_zonefile` – download a specified zonefile.
 
 ### Instantiating a client
 Use the following code to create a new `CZDSClient` object:
