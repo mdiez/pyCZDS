@@ -1,6 +1,24 @@
+Metadata-Version: 2.1
+Name: pyCZDS
+Version: 1.0
+Summary: An API client for ICANN's Centralized Zone Data Service (CDZS). Learn more under https://czds.icann.org/.
+Author-email: "Max M. Diez" <pyczds@xdiez.com>
+Project-URL: Homepage, https://github.com/mdiez/pyCZDS
+Project-URL: Bug Tracker, https://github.com/mdiez/pyCZDS/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)
+Classifier: Operating System :: OS Independent
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Internet :: Name Service (DNS)
+Classifier: Topic :: Software Development :: Libraries
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
 # pyCZDS – An API client for ICANN's Centralized Zone Data Service (CZDS)
 
-This repository hosts the source code for the respective Python package which can be found on [PyPI](https://pypi.org/project/pyCZDS/).
+This repository hosts the source code for the respective Python package which can be found on [PyPI]().
 
 ## Installation
 
