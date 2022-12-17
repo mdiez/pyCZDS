@@ -2,7 +2,8 @@ import random
 import logging
 import os
 import tempfile
-import cgi
+from email.message import EmailMessage
+from datetime import datetime
 
 from test_pyczds import TestPyCZDS
 
@@ -27,6 +28,19 @@ class TestClient(TestPyCZDS):
         self.assertGreater(int(head['content-length']), 0)
         self.assertEqual(head['content-type'], 'application/x-gzip')
 
+    def test_parse_headers_online(self):
+        zonefile_url_list = self.client.get_zonefiles_list()
+        url = random.choice(zonefile_url_list)
+
+        head = self.client.head_zonefile(url)
+
+        self.assertIn('parsed', head)
+        self.assertIsInstance(head['parsed']['last-modified'], datetime)
+        self.assertIsInstance(head['parsed']['content-length'], int)
+        self.assertIsInstance(head['parsed']['filename'], str)
+
+        print(head)
+
     def download_smallest_zonefile(self, download_dir='', filename=''):
         zonefile_url_list = self.client.get_zonefiles_list()
         smallest_file_size = int()
@@ -38,8 +52,10 @@ class TestClient(TestPyCZDS):
             if smallest_file_size == 0 or int(head['Content-Length']) < smallest_file_size:
                 smallest_file_size = int(head['Content-Length'])
                 smallest_file_url = url
-                value, params = cgi.parse_header(head['Content-Disposition'])
-                smallest_file_filename = params['filename']
+
+                msg = EmailMessage()
+                msg['Content-Disposition'] = head['Content-Disposition']
+                smallest_file_filename = msg.get_filename()
 
         logging.debug(
             'Identified {} as smallest file with {} bytes to download.'.format(smallest_file_url, smallest_file_size)

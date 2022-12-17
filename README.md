@@ -62,6 +62,21 @@ print(c.head_zonefile('https://czds-download-api.icann.org/czds/downloads/vision
     ...
 }
 ```
+To facilitate further work with the metadata, the `dict` not only contains the raw HTTP headers, but also a subdict `parsed`, which contains a number of headers parsed in suitable data types:
+```
+print(c.head_zonefile('https://czds-download-api.icann.org/czds/downloads/vision.zone'))
+# {
+    'Last-Modified': 'Sat, 17 Dec 2022 00:17:25 GMT',
+    'Content-Disposition': 'attachment;filename=net.txt.gz',
+    'Content-Length': '481167941',
+    ...
+    'parsed': {
+        'last-modified': datetime.datetime(2022, 12, 17, 0, 17, 25, tzinfo=datetime.timezone.utc),  # datetime
+        'content-length': 481167941,  # int
+        'filename': 'net.txt.gz'  # string
+    }
+}
+```
 
 ### Downloading a zone file
 The following command will download a specified zone file:

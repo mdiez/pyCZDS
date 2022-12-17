@@ -1,8 +1,9 @@
 import sys
 import logging
-import cgi
 import os
 from urllib.parse import urljoin, urlparse, unquote
+from email.utils import parsedate_to_datetime
+from email.message import EmailMessage
 from importlib import metadata
 
 import requests
@@ -43,6 +44,21 @@ class CZDSClient(CZDSAuthentication):
 
         return response
 
+    def _parse_headers(self, headers):
+        parsed = requests.models.CaseInsensitiveDict()
+
+        parsed['last-modified'] = parsedate_to_datetime(headers['last-modified'])
+        parsed['content-length'] = int(headers['content-length'])
+
+        msg = EmailMessage()
+        msg['content-disposition'] = headers['content-disposition']
+        filename = msg.get_filename()
+        parsed['filename'] = filename
+
+        headers['parsed'] = parsed
+
+        return headers
+
     def get_zonefiles_list(self):
         logging.debug('About to request zonefile URLs list.')
 
@@ -57,6 +73,7 @@ class CZDSClient(CZDSAuthentication):
         logging.debug('About to request headers for zonefile {}.'.format(zonefile_url.split('/')[-1]))
 
         headers = self._do_request('head', zonefile_url).headers
+        headers = self._parse_headers(headers)
 
         return headers
 
@@ -72,21 +89,10 @@ class CZDSClient(CZDSAuthentication):
         )
 
         with self._do_request('get', zonefile_url, stream=True) as response:
-            value, params = cgi.parse_header(response.headers['Content-Disposition'])
-            if value.lower() != 'attachment':
-                raise ValueError(
-                    'Received unexpected value in Content-Disposition header: {}.'.format(
-                        response.headers['Content-Disposition'])
-                )
+            headers = self._parse_headers(response.headers)
 
             if not filename or (filename and len(filename) == 0):
-                if 'filename' not in params.keys():
-                    raise ValueError(
-                        'No filename passed in Content-Disposition header: {}.'.format(
-                            response.headers['Content-Disposition'])
-                    )
-
-                local_filename = params['filename']
+                local_filename = headers['parsed']['filename']
             else:
                 local_filename = filename
 
