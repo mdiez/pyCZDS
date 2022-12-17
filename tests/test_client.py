@@ -10,15 +10,15 @@ from test_pyczds import TestPyCZDS
 class TestClient(TestPyCZDS):
 
     # region online tests
-    def test_get_zone_download_links_online(self):
-        zonefile_link_list = self.client.get_zone_download_links()
-        self.assertTrue(isinstance(zonefile_link_list, list))
+    def test_get_zonefiles_list_online(self):
+        zonefile_url_list = self.client.get_zonefiles_list()
+        self.assertTrue(isinstance(zonefile_url_list, list))
 
     def test_head_zonefile_online(self):
-        zonefile_link_list = self.client.get_zone_download_links()
-        link = random.choice(zonefile_link_list)
+        zonefile_url_list = self.client.get_zonefiles_list()
+        url = random.choice(zonefile_url_list)
 
-        head = self.client.head_zonefile(link)
+        head = self.client.head_zonefile(url)
 
         self.assertGreater(len(head), 0)
         self.assertIn('date', head)
@@ -28,17 +28,17 @@ class TestClient(TestPyCZDS):
         self.assertEqual(head['content-type'], 'application/x-gzip')
 
     def download_smallest_zonefile(self, download_dir='', filename=''):
-        zonefile_link_list = self.client.get_zone_download_links()
+        zonefile_url_list = self.client.get_zonefiles_list()
         smallest_file_size = int()
         smallest_file_url = str()
         smallest_file_filename = str()
 
-        for link in zonefile_link_list:
-            head = self.client.head_zonefile(link)
+        for url in zonefile_url_list:
+            head = self.client.head_zonefile(url)
             if smallest_file_size == 0 or int(head['Content-Length']) < smallest_file_size:
-                value, params = cgi.parse_header(head['Content-Disposition'])
                 smallest_file_size = int(head['Content-Length'])
-                smallest_file_url = link
+                smallest_file_url = url
+                value, params = cgi.parse_header(head['Content-Disposition'])
                 smallest_file_filename = params['filename']
 
         logging.debug(

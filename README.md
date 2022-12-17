@@ -1,6 +1,6 @@
 # pyCZDS – An API client for ICANN's Centralized Zone Data Service (CZDS)
 
-*This package allows you to seamlessly interact with ICANN's CZDS and download zonefiles for participating Top-Level Domains.*
+*This package allows you to seamlessly interact with ICANN's CZDS and download zone files for participating Top-Level Domains.*
 
 > The Centralized Zone Data Service (CZDS) is an online portal where any interested party can request access to the Zone Files provided by participating generic Top-Level Domains (gTLDs).
 
@@ -19,9 +19,9 @@ Install pyCZDS with the command `pip install pyCZDS`.
 
 ## Usage
 The library supports the following actions:
-* `client.get_zone_download_links` – retrieves the download links all zonefiles the respective account is authorized to access;
-* `client.head_zonefile` – retrieves the headers for a specified zonefile, which contain metadata such as the last modified timestamp and the file's size;
-* `client.get_zonefile` – download a specified zonefile.
+* `client.get_zonefiles_list` – retrieves the download links all zone files the respective account is authorized to access;
+* `client.head_zonefile` – retrieves the headers for a specified zone file, which contain metadata such as the last modified timestamp and the file's size;
+* `client.get_zonefile` – download a specified zone file.
 
 ### Instantiating a client
 Use the following code to create a new `CZDSClient` object:
@@ -34,21 +34,21 @@ c = CZDSClient(username, password)
 
 The client handles the authentication with the API transparently. It will authenticate with the first call of any method, and will retain the acquired token for subsequent requests. When the token expires, it will renew the authentication automatically.
 
-### Getting zonefile download links
-The following command will retrieve a list of all zonefiles the account is authorized to access. It returns a `list` with the respective URLs.
+### Getting zone file download URLs
+The following command will retrieve a list of all zone files the account is authorized to access. It returns a `list` with the respective URLs.
 
 ```
-print(c.get_zone_download_links())
+print(c.get_zonefiles_list())
 # [
     'https://czds-download-api.icann.org/czds/downloads/net.zone',
     ...
     'https://czds-download-api.icann.org/czds/downloads/com.zone'
 ]
 ```
-Requests for accessing additional zonefiles can be made online under this [link](https://czds.icann.org/zone-request/add).
+Requests for accessing additional zone files can be made online under this [link](https://czds.icann.org/zone-request/add).
 
-### Requesting the headers for a zonefile
-The following command will retrieve the headers for a specified zonefile. It returns a `dict`:
+### Requesting the headers for a zone file
+Using one of the links received via `get_zonefiles_list()`, the following command will retrieve the headers for a specified zonefile. It returns a `dict`:
 ```
 print(c.head_zonefile('https://czds-download-api.icann.org/czds/downloads/vision.zone'))
 # {
@@ -63,12 +63,14 @@ print(c.head_zonefile('https://czds-download-api.icann.org/czds/downloads/vision
 }
 ```
 
-### Downloading a zonefile
-The following command will download a specified zonefile to your computer:
+### Downloading a zone file
+The following command will download a specified zone file:
 ```
-c.get_zonefile('https://czds-download-api.icann.org/czds/downloads/vision.zone', download_dir='zonefiles/')
+c.get_zonefile('https://czds-download-api.icann.org/czds/downloads/vision.zone', download_dir='zonefiles/', filename='vision_zonefile')
 ```
-The parameter `download_dir` is optional. If it is not passed, the file will be downloaded to the working directory of your script.
+Both parameters are optional.
+* `download_dir` sets the local directory where the file should be downloaded to. If it is not passed, the file will be downloaded to the working directory of your script.
+* `filename` sets the local filename of the downloaded file. If it is not passed, the filename will be set according to the value the API provides in the `Content-Disposition` header, e.g., `vision.tar.gz`.
 
 
 ## Troubleshooting
@@ -105,6 +107,7 @@ class TestPyCZDS(unittest.TestCase):
 I am a hobby enthusiast and am neither affiliated with ICANN, nor is this library endorsed by ICANN.
 
 ## Links and further information
+* [Wikipedia – Zone file](https://en.wikipedia.org/wiki/Zone_file)
 * [CZDS – Login](https://czds.icann.org/)
 * [CZDS – Help](https://czds.icann.org/help)
 * [CZDS – Request access to additional hostfiles](https://czds.icann.org/zone-request/add)

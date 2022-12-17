@@ -1,3 +1,4 @@
+import sys
 import logging
 import cgi
 import os
@@ -16,6 +17,13 @@ class CZDSClient(CZDSAuthentication):
     def __init__(self, username, password):
         super().__init__(username=username, password=password)
 
+        if 'unittest' not in sys.modules.keys():
+            self._user_agent = '{} / {}'.format(
+                metadata.distribution('pyCZDS').name, metadata.distribution('pyCZDS').version
+            )
+        else:
+            self._user_agent = 'pyCZDS / test'
+
     def _do_request(self, method, url, stream=False):
         if not self._is_authenticated():
             logging.debug('Not authenticated. Attempting authentication.')
@@ -23,9 +31,7 @@ class CZDSClient(CZDSAuthentication):
 
         headers = {
             'Authorization': 'Bearer {}'.format(self._token),
-            'User-Agent': '{} / {}'.format(
-                metadata.distribution('pyCZDS').name, metadata.distribution('pyCZDS').version
-            )
+            'User-Agent': self._user_agent
         }
 
         request = requests.Request(method.upper(), url=url, headers=headers)
@@ -37,35 +43,35 @@ class CZDSClient(CZDSAuthentication):
 
         return response
 
-    def get_zone_download_links(self):
-        logging.debug('About to request zonefile links list.')
+    def get_zonefiles_list(self):
+        logging.debug('About to request zonefile URLs list.')
 
-        link_list = self._do_request('get', self.ZONE_DOWNLOAD_LINKS_LIST_URL).json()
+        url_list = self._do_request('get', self.ZONE_DOWNLOAD_LINKS_LIST_URL).json()
 
-        if len(link_list) == 0:
+        if len(url_list) == 0:
             raise Exception('This account does not seem to have access to any zonefiles.')
 
-        return link_list
+        return url_list
 
-    def head_zonefile(self, zonefile_link):
-        logging.debug('About to request headers for zonefile {}.'.format(zonefile_link.split('/')[-1]))
+    def head_zonefile(self, zonefile_url):
+        logging.debug('About to request headers for zonefile {}.'.format(zonefile_url.split('/')[-1]))
 
-        headers = self._do_request('head', zonefile_link).headers
+        headers = self._do_request('head', zonefile_url).headers
 
         return headers
 
-    def get_zonefile(self, zonefile_link, download_dir='', filename=''):
+    def get_zonefile(self, zonefile_url, download_dir='', filename=''):
         if not download_dir or (download_dir and len(download_dir) == 0):
             download_dir = os.getcwd()
 
-        url_parsed = urlparse(zonefile_link)
+        url_parsed = urlparse(zonefile_url)
         remote_filename = unquote(os.path.basename(url_parsed.path))
 
         logging.debug('About to start download for zonefile {} to directory {}.'.format(
             remote_filename, download_dir)
         )
 
-        with self._do_request('get', zonefile_link, stream=True) as response:
+        with self._do_request('get', zonefile_url, stream=True) as response:
             value, params = cgi.parse_header(response.headers['Content-Disposition'])
             if value.lower() != 'attachment':
                 raise ValueError(
@@ -84,7 +90,7 @@ class CZDSClient(CZDSAuthentication):
             else:
                 local_filename = filename
 
-            filepath = os.path.join(download_dir, filename)
+            filepath = os.path.join(download_dir, local_filename)
 
             logging.debug('Streaming file to {}.'.format(filepath))
 

@@ -12,7 +12,9 @@ class CZDSHelpers(object):
 
     def _preprocess_request(self, request):
         logging.debug(
-            'About to send {} request to link {} with headers {}.'.format(request.method, request.url, request.headers)
+            'About to send {} request to URL {} with headers {} and body {}.'.format(
+                request.method, request.url, request.headers, str(request.body)
+            )
         )
 
     def _preprocess_response(self, response, stream=False):
