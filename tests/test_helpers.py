@@ -1,3 +1,6 @@
+import tempfile
+import os
+
 from requests import HTTPError
 
 from test_pyczds import TestPyCZDS
@@ -46,4 +49,28 @@ class TestHelpers(TestPyCZDS):
         r = MockRequest(500)
         with self.assertRaisesRegex(HTTPError, '.nternal service error.'):
             self.client._preprocess_response(r)
+
+    def test_file_size_difference(self):
+        test_string = '1234567890'
+        test_string_size = len(test_string) - 1
+
+        with tempfile.TemporaryDirectory() as d:
+            file_path = os.path.join(d, 'file_size_test.tmp')
+            with open(file_path, 'w') as f:
+                f.write(test_string)
+
+            with self.assertRaisesRegex(Exception, '.*size of the file.*differs.*'):
+                self.client._check_file_size(file_path, test_string_size)
+
+    def test_file_size_identical(self):
+        test_string = '1234567890'
+        test_string_size = len(test_string)
+
+        with tempfile.TemporaryDirectory() as d:
+            file_path = os.path.join(d, 'file_size_test.tmp')
+            with open(file_path, 'w') as f:
+                f.write(test_string)
+
+            self.client._check_file_size(file_path, test_string_size)
+
     # endregion

@@ -1,5 +1,6 @@
 import logging
 import re
+import os
 
 import requests
 
@@ -44,3 +45,13 @@ class CZDSHelpers(object):
                 raise requests.HTTPError('Too many authentication attempts from the same IP address.')
             if response.status_code == 500:
                 raise requests.HTTPError('Internal service error.')
+
+    def _check_file_size(self, file_path, size):
+        file_size = os.path.getsize(file_path)
+
+        if file_size != size:
+            raise Exception(
+                'The size of the file ({:,} bytes) differs from the size announced in the header ({:,} bytes).'.format(
+                    file_size, size
+                )
+            )

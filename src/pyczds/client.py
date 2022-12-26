@@ -90,18 +90,27 @@ class CZDSClient(CZDSAuthentication):
 
         with self._do_request('get', zonefile_url, stream=True) as response:
             headers = self._parse_headers(response.headers)
+            header_size = headers['parsed']['content-length']
 
             if not filename or (filename and len(filename) == 0):
                 local_filename = headers['parsed']['filename']
             else:
                 local_filename = filename
 
-            filepath = os.path.join(download_dir, local_filename)
+            file_path = os.path.join(download_dir, local_filename)
 
-            logging.debug('Streaming file to {}.'.format(filepath))
+            logging.debug('Streaming file with {:,} bytes to {}.'.format(header_size, file_path))
 
-            with open(filepath, 'wb') as f:
+            with open(file_path, 'wb') as f:
                 for chunk in response.iter_content(chunk_size=2**19):
                     f.write(chunk)
+                    file_size = os.path.getsize(file_path)
+                    logging.info(
+                        '[{:.0%}] Downloaded {:,} of {:,} bytes.'.format(
+                            file_size / header_size, file_size, header_size
+                        )
+                    )
 
-            logging.debug('Completed download of zonefile {}.'.format(filepath))
+            logging.debug('Completed download of zonefile {}.'.format(file_path))
+
+            self._check_file_size(file_path, header_size)
