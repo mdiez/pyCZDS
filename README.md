@@ -20,7 +20,7 @@ Install pyCZDS with the command `pip install pyCZDS`.
 
 ## Usage
 The library supports the following actions:
-* `client.get_zonefiles_list` – retrieves the download links all zone files the respective account is authorized to access;
+* `client.get_zonefiles_list` – retrieves the download links for all zone files the respective account is authorized to access;
 * `client.head_zonefile` – retrieves the headers for a specified zone file, which contain metadata such as the last modified timestamp and the file's size;
 * `client.get_zonefile` – download a specified zone file.
 
