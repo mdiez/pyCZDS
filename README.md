@@ -7,8 +7,9 @@
 [Source](https://czds.icann.org/home)
 
 Relevant links:
+* [ICANN CZDS homepage](https://czds.icann.org/home)
 * pyCZDS on [PyPI](https://pypi.org/project/pyCZDS/)
-* pyCDZS repo on [GitHub](https://github.com/mdiez/pyCZDS)
+* pyCZDS repo on [GitHub](https://github.com/mdiez/pyCZDS)
 
 ## Installation
 
@@ -45,10 +46,10 @@ print(c.get_zonefiles_list())
     'https://czds-download-api.icann.org/czds/downloads/com.zone'
 ]
 ```
-Requests for accessing additional zone files can be made online under this [link](https://czds.icann.org/zone-request/add).
+Access to additional zone files can be requested online under this [link](https://czds.icann.org/zone-request/add).
 
 ### Requesting the headers for a zone file
-Using one of the links received via `get_zonefiles_list()`, the following command will retrieve the headers for a specified zonefile. It returns a `dict`:
+Using one of the links received via `get_zonefiles_list()`, the following command retrieves the headers for a specified zonefile. It returns a `dict` (more specifically, a `requests.models.CaseInsensitiveDict`):
 ```
 print(c.head_zonefile('https://czds-download-api.icann.org/czds/downloads/vision.zone'))
 # {
@@ -62,7 +63,7 @@ print(c.head_zonefile('https://czds-download-api.icann.org/czds/downloads/vision
     ...
 }
 ```
-To facilitate further work with the metadata, the `dict` not only contains the raw HTTP headers, but also a subdict `parsed`, which contains a number of headers parsed in suitable data types:
+To facilitate further work with the metadata, the dictionary not only contains the raw HTTP headers, but also a subdict `parsed` (which is a `requests.models.CaseInsensitiveDict`, too), which contains a number of headers parsed in suitable data types:
 ```
 print(c.head_zonefile('https://czds-download-api.icann.org/czds/downloads/vision.zone'))
 # {
@@ -89,7 +90,7 @@ Both parameters are optional.
 
 
 ## Troubleshooting
-Should you encounter errors, a good first step is to increase the logging level to `debug` and then analyze the output.
+Should you encounter any errors, a good first step is to increase the logging level to `debug` and then analyze the output.
 
 ```
 import logging

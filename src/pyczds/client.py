@@ -4,7 +4,6 @@ import os
 from urllib.parse import urljoin, urlparse, unquote
 from email.utils import parsedate_to_datetime
 from email.message import EmailMessage
-from importlib import metadata
 
 import requests
 
@@ -15,17 +14,15 @@ class CZDSClient(CZDSAuthentication):
     BASE_URL = 'https://czds-api.icann.org'
     ZONE_DOWNLOAD_LINKS_LIST_URL = urljoin(BASE_URL, '/czds/downloads/links')
 
-    def __init__(self, username, password):
+    def __init__(self, username: str, password: str) -> None:
         super().__init__(username=username, password=password)
 
-        if 'unittest' not in sys.modules.keys():
-            self._user_agent = '{} / {}'.format(
-                metadata.distribution('pyCZDS').name, metadata.distribution('pyCZDS').version
-            )
-        else:
-            self._user_agent = 'pyCZDS / test'
+        self._user_agent = '{} / {}'.format('pyCZDS', '1.6')
 
-    def _do_request(self, method, url, stream=False):
+        if 'unittest' in sys.modules.keys():
+            self._user_agent = '{} TEST'.format(self._user_agent)
+
+    def _do_request(self, method: str, url: str, stream: bool = False) -> requests.Response:
         if not self._is_authenticated():
             logging.debug('Not authenticated. Attempting authentication.')
             self._authenticate()
@@ -44,7 +41,7 @@ class CZDSClient(CZDSAuthentication):
 
         return response
 
-    def _parse_headers(self, headers):
+    def _parse_headers(self, headers: requests.models.CaseInsensitiveDict) -> requests.models.CaseInsensitiveDict:
         parsed = requests.models.CaseInsensitiveDict()
 
         parsed['last-modified'] = parsedate_to_datetime(headers['last-modified'])
@@ -59,7 +56,7 @@ class CZDSClient(CZDSAuthentication):
 
         return headers
 
-    def get_zonefiles_list(self):
+    def get_zonefiles_list(self) -> list:
         logging.debug('About to request zonefile URLs list.')
 
         url_list = self._do_request('get', self.ZONE_DOWNLOAD_LINKS_LIST_URL).json()
@@ -69,7 +66,7 @@ class CZDSClient(CZDSAuthentication):
 
         return url_list
 
-    def head_zonefile(self, zonefile_url):
+    def head_zonefile(self, zonefile_url: str) -> requests.models.CaseInsensitiveDict:
         logging.debug('About to request headers for zonefile {}.'.format(zonefile_url.split('/')[-1]))
 
         headers = self._do_request('head', zonefile_url).headers
@@ -77,8 +74,8 @@ class CZDSClient(CZDSAuthentication):
 
         return headers
 
-    def get_zonefile(self, zonefile_url, download_dir='', filename=''):
-        if not download_dir or (download_dir and len(download_dir) == 0):
+    def get_zonefile(self, zonefile_url: str, download_dir: str = '', filename: str = '') -> None:
+        if not download_dir or (download_dir and len(str(download_dir)) == 0):
             download_dir = os.getcwd()
 
         url_parsed = urlparse(zonefile_url)

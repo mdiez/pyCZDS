@@ -11,7 +11,7 @@ from .helpers import CZDSHelpers
 class CZDSAuthentication(CZDSHelpers):
     AUTH_URL = "https://account-api.icann.org/api/authenticate"
 
-    def __init__(self, username, password):
+    def __init__(self, username: str, password: str) -> None:
         if not isinstance(username, str) or len(username) == 0 or not self._is_email_address(username):
             raise ValueError('Username invalid.')
 
@@ -23,7 +23,7 @@ class CZDSAuthentication(CZDSHelpers):
 
         self._token = str()
 
-    def _get_token_jwt_payload(self):
+    def _get_token_jwt_payload(self) -> json:
         logging.debug('Parsing JWT payload.')
 
         if len(self._token) == 0:
@@ -37,7 +37,7 @@ class CZDSAuthentication(CZDSHelpers):
 
         return j
 
-    def _is_authenticated(self):
+    def _is_authenticated(self) -> bool:
         logging.debug('About to check if client is authenticated or not.')
 
         if len(self._token) > 0:
@@ -54,7 +54,7 @@ class CZDSAuthentication(CZDSHelpers):
 
         return False
 
-    def _authenticate(self):
+    def _authenticate(self) -> None:
         logging.debug('About to authenticate with username {}.'.format(self._username))
 
         headers = {
@@ -78,4 +78,5 @@ class CZDSAuthentication(CZDSHelpers):
 
         logging.debug('Successfully authenticated. Received token {}.'.format(token))
 
-        self._token = token
+        token_padded = token + '=' * ((4 - len(token) % 4) % 4)
+        self._token = token_padded

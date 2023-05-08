@@ -1,24 +1,25 @@
 import logging
 import re
 import os
+from typing import Match
 
 import requests
 
 
 class CZDSHelpers(object):
 
-    def _is_email_address(self, address_string):
+    def _is_email_address(self, address_string: str) -> Match:
         pat = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
         return re.match(pat, address_string)
 
-    def _preprocess_request(self, request):
+    def _preprocess_request(self, request: requests.Request) -> None:
         logging.debug(
             'About to send {} request to URL {} with headers {} and body {}.'.format(
                 request.method, request.url, request.headers, str(request.body)
             )
         )
 
-    def _preprocess_response(self, response, stream=False):
+    def _preprocess_response(self, response: requests.Response, stream: bool = False) -> None:
         logging.debug('Returned status code {}.'.format(response.status_code))
         logging.debug('Received headers {}.'.format(response.headers))
 
@@ -46,7 +47,7 @@ class CZDSHelpers(object):
             if response.status_code == 500:
                 raise requests.HTTPError('Internal service error.')
 
-    def _check_file_size(self, file_path, size):
+    def _check_file_size(self, file_path: str, size: int) -> None:
         file_size = os.path.getsize(file_path)
 
         if file_size != size:

@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: pyCZDS
-Version: 1.2.1
+Version: 1.6
 Summary: An API client for ICANN's Centralized Zone Data Service (CZDS). Learn more under https://czds.icann.org/.
 Author-email: "Max M. Diez" <pyczds@xdiez.com>
 Project-URL: Homepage, https://github.com/mdiez/pyCZDS
@@ -25,8 +25,9 @@ License-File: LICENSE
 [Source](https://czds.icann.org/home)
 
 Relevant links:
+* [ICANN CZDS homepage](https://czds.icann.org/home)
 * pyCZDS on [PyPI](https://pypi.org/project/pyCZDS/)
-* pyCDZS repo on [GitHub](https://github.com/mdiez/pyCZDS)
+* pyCZDS repo on [GitHub](https://github.com/mdiez/pyCZDS)
 
 ## Installation
 
@@ -63,10 +64,10 @@ print(c.get_zonefiles_list())
     'https://czds-download-api.icann.org/czds/downloads/com.zone'
 ]
 ```
-Requests for accessing additional zone files can be made online under this [link](https://czds.icann.org/zone-request/add).
+Access to additional zone files can be requested online under this [link](https://czds.icann.org/zone-request/add).
 
 ### Requesting the headers for a zone file
-Using one of the links received via `get_zonefiles_list()`, the following command will retrieve the headers for a specified zonefile. It returns a `dict`:
+Using one of the links received via `get_zonefiles_list()`, the following command retrieves the headers for a specified zonefile. It returns a `dict` (more specifically, a `requests.models.CaseInsensitiveDict`):
 ```
 print(c.head_zonefile('https://czds-download-api.icann.org/czds/downloads/vision.zone'))
 # {
@@ -78,6 +79,21 @@ print(c.head_zonefile('https://czds-download-api.icann.org/czds/downloads/vision
     ...
     'Content-Length': '602034',
     ...
+}
+```
+To facilitate further work with the metadata, the dictionary not only contains the raw HTTP headers, but also a subdict `parsed` (which is a `requests.models.CaseInsensitiveDict`, too), which contains a number of headers parsed in suitable data types:
+```
+print(c.head_zonefile('https://czds-download-api.icann.org/czds/downloads/vision.zone'))
+# {
+    'Last-Modified': 'Sat, 17 Dec 2022 00:17:25 GMT',
+    'Content-Disposition': 'attachment;filename=net.txt.gz',
+    'Content-Length': '481167941',
+    ...
+    'parsed': {
+        'last-modified': datetime.datetime(2022, 12, 17, 0, 17, 25, tzinfo=datetime.timezone.utc),  # datetime
+        'content-length': 481167941,  # int
+        'filename': 'net.txt.gz'  # string
+    }
 }
 ```
 
@@ -92,7 +108,7 @@ Both parameters are optional.
 
 
 ## Troubleshooting
-Should you encounter errors, a good first step is to increase the logging level to `debug` and then analyze the output.
+Should you encounter any errors, a good first step is to increase the logging level to `debug` and then analyze the output.
 
 ```
 import logging
