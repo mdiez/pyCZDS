@@ -30,7 +30,7 @@ class CZDSAuthentication(CZDSHelpers):
             raise ValueError('Authentication token is not set.')
 
         payload_b64 = self._token.split('.')[1]
-        s = base64.b64decode(payload_b64)
+        s = base64.b64decode(payload_b64 + '=' * (-len(payload_b64) % 4))
         j = json.loads(s)
 
         logging.debug('JSON content of JWT payload: {}'.format(json.dumps(j)))
