@@ -22,7 +22,7 @@ Install pyCZDS with the command `pip install pyCZDS`.
 The library supports the following actions:
 * `client.get_zonefiles_list` – retrieves the download links for all zone files the respective account is authorized to access;
 * `client.head_zonefile` – retrieves the headers for a specified zone file, which contain metadata such as the last modified timestamp and the file's size;
-* `client.get_zonefile` – download a specified zone file.
+* `client.get_zonefile` – downloads a specified zone file.
 
 ### Instantiating a client
 Use the following code to create a new `CZDSClient` object:
@@ -63,7 +63,7 @@ print(c.head_zonefile('https://czds-download-api.icann.org/czds/downloads/vision
     ...
 }
 ```
-To facilitate further work with the metadata, the dictionary not only contains the raw HTTP headers, but also a subdict `parsed` (which is a `requests.models.CaseInsensitiveDict`, too), which contains a number of headers parsed in suitable data types:
+To facilitate further work with the metadata, the dictionary not only contains the raw HTTP headers, but also a subdict `parsed` (which is a `requests.models.CaseInsensitiveDict`, too), which contains a selection of the headers parsed in suitable data types:
 ```
 print(c.head_zonefile('https://czds-download-api.icann.org/czds/downloads/vision.zone'))
 # {
@@ -72,11 +72,16 @@ print(c.head_zonefile('https://czds-download-api.icann.org/czds/downloads/vision
     'Content-Length': '481167941',
     ...
     'parsed': {
-        'last-modified': datetime.datetime(2022, 12, 17, 0, 17, 25, tzinfo=datetime.timezone.utc),  # datetime
+        'last-modified': datetime.datetime(2022, 12, 17, 0, 17, 25, tzinfo=datetime.timezone.utc),  # datetime.datetime
         'content-length': 481167941,  # int
         'filename': 'net.txt.gz'  # string
     }
 }
+```
+Having the values available in parsed form makes it easier to compare different headers of a zone file. For example, you can easily determine whether a zonefile has been updated since the last retrieval by comparing:
+```
+headers_old['parsed']['last-modified'] < headers_new['parsed']['last_modified']
+# True
 ```
 
 ### Downloading a zone file

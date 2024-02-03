@@ -1,5 +1,21 @@
 # pyCZDS Changelog
 
+## 1.7 (11 December 2023)
+### Features
+(no changes)
+
+### Fixes
+- Fixed a bug where the JWT payload whose length was not a multiple of 4 could not be decoded by pyCZDS and thus led to a problem when authenticating with the CZDS web service (thanks to [Marcin Szopa for reporting this issue and Tiago Martins for submitting a pull request](https://github.com/mdiez/pyCZDS/issues/2)!).
+
+### Tests
+(no changes)
+
+### Internals
+(no changes)
+
+### Documentation
+- Fixed a few typos and added an example how to use the 'parsed' subdictionary in the headers dictionary.
+
 ## 1.6 (08 May 2023)
 ### Features
 (no changes)
