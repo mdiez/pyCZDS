@@ -1,6 +1,6 @@
 # pyCZDS – An API client for ICANN's Centralized Zone Data Service (CZDS)
 
-*This package allows you to seamlessly interact with ICANN's CZDS and download zone files for participating Top-Level Domains.*
+*This package allows you to seamlessly interact with ICANN's CZDS and download zone files for participating top level domains (e.g., .com, .net, and many others).*
 
 > The Centralized Zone Data Service (CZDS) is an online portal where any interested party can request access to the Zone Files provided by participating generic Top-Level Domains (gTLDs).
 
@@ -45,7 +45,7 @@ com_zonefile_headers = c.head_zonefile(com_zonefile_url)
 com_zonefile_headers['parsed']['last-modified'].date() == datetime.now(timezone.utc).date()
 ```
 ### 5. Download the zonefile
-The following command will download the zone file for the .com zone in the current directory to the file "com.zone".
+The following command will download the zone file for the .com zone in the current directory to the file "com.txt.gz".
 ```
 c.get_zonefile(com_zonefile_url)
 ```
@@ -125,7 +125,7 @@ c.get_zonefile('https://czds-download-api.icann.org/czds/downloads/vision.zone',
 ```
 The following parameters are optional:
 * `download_dir` sets the local directory where the file should be downloaded to. If it is not passed, the file will be downloaded to the working directory of your script.
-* `filename` sets the local filename of the downloaded file. If it is not passed, the filename will be set according to the value the API provides in the `Content-Disposition` header, e.g., `vision.tar.gz`.
+* `filename` sets the local filename of the downloaded file. If it is not passed, the filename will be set according to the value the API provides in the `Content-Disposition` header, e.g., `vision.txt.gz`.
 
 
 ## Troubleshooting
