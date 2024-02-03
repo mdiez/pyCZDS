@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: pyCZDS
-Version: 1.7
+Version: 1.7.1
 Summary: An API client for ICANN's Centralized Zone Data Service (CZDS). Learn more under https://czds.icann.org/.
 Author-email: "Max M. Diez" <pyczds@xdiez.com>
 Project-URL: Homepage, https://github.com/mdiez/pyCZDS
@@ -22,7 +22,7 @@ License-File: LICENSE
 
 > The Centralized Zone Data Service (CZDS) is an online portal where any interested party can request access to the Zone Files provided by participating generic Top-Level Domains (gTLDs).
 
-[Source](https://czds.icann.org/home)
+[(source)](https://czds.icann.org/home)
 
 Relevant links:
 * [ICANN CZDS homepage](https://czds.icann.org/home)
@@ -36,14 +36,48 @@ The library implements a client against the official API documentation which can
 
 Install pyCZDS with the command `pip install pyCZDS`.
 
-## Usage
+## Exemplary flow
+### 1. Create a new CZDSClient
+```
+from pyczds.client import CZDSClient
+
+# replace username and password with actual credentials
+c = CZDSClient(username, password)
+```
+### 2. Retrieve all URLs for the zone files accessible under the account
+```
+zonefile_urls = c.get_zonefiles_list()
+```
+### 3. From the list of URLs, select the zone file of interest
+```
+com_zonefile_url = next((url for url in urls if "com.zone" in url), None)
+```
+### 4. Optionally, inspect the current header of the selected zonefile
+This is useful if, for example, you have downloaded the same zonefile previously and want to understand if it has been updated in the meantime.
+```
+from datetime import datetime
+
+com_zonefile_headers = c.head_zonefile(com_zonefile_url)
+
+# check if the zonefile is from today
+com_zonefile_headers['parsed']['last-modified'].date() == datetime.now().date()
+```
+### 5. Download the zonefile
+The following command will download the zone file for the .com zone in the current directory to the file "com.zone".
+```
+c.get_zonefile(com_zonefile_url)
+```
+
+## Detailed description
+
+### Usage
 The library supports the following actions:
 * `client.get_zonefiles_list` – retrieves the download links for all zone files the respective account is authorized to access;
 * `client.head_zonefile` – retrieves the headers for a specified zone file, which contain metadata such as the last modified timestamp and the file's size;
 * `client.get_zonefile` – downloads a specified zone file.
 
 ### Instantiating a client
-Use the following code to create a new `CZDSClient` object:
+Use the following pyCZDS – An API client for ICANN's Centralized Zone Data Service (CZDS)code to create a new `CZDSClient` object:
 ```
 from pyczds.client import CZDSClient
 
@@ -107,7 +141,7 @@ The following command will download a specified zone file:
 ```
 c.get_zonefile('https://czds-download-api.icann.org/czds/downloads/vision.zone', download_dir='zonefiles/', filename='vision_zonefile')
 ```
-Both parameters are optional.
+The following parameters are optional:
 * `download_dir` sets the local directory where the file should be downloaded to. If it is not passed, the file will be downloaded to the working directory of your script.
 * `filename` sets the local filename of the downloaded file. If it is not passed, the filename will be set according to the value the API provides in the `Content-Disposition` header, e.g., `vision.tar.gz`.
 

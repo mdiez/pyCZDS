@@ -1,6 +1,6 @@
 # pyCZDS Changelog
 
-## 1.7 (11 December 2023)
+## 1.7.1 (11 December 2023)
 ### Features
 (no changes)
 
@@ -14,6 +14,7 @@
 (no changes)
 
 ### Documentation
+- Added exemplary usage flow.
 - Fixed a few typos and added an example how to use the 'parsed' subdictionary in the headers dictionary.
 
 ## 1.6 (08 May 2023)
