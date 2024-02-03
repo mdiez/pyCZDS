@@ -1,6 +1,6 @@
 # pyCZDS Changelog
 
-## 1.7.4 (03 February 2024)
+## 1.7.5 (03 February 2024)
 ### Features
 (no changes)
 
