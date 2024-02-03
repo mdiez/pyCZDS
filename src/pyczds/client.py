@@ -17,7 +17,7 @@ class CZDSClient(CZDSAuthentication):
     def __init__(self, username: str, password: str) -> None:
         super().__init__(username=username, password=password)
 
-        self._user_agent = '{} / {}'.format('pyCZDS', '1.6')
+        self._user_agent = '{} / {}'.format('pyCZDS', '1.7')
 
         if 'unittest' in sys.modules.keys():
             self._user_agent = '{} TEST'.format(self._user_agent)

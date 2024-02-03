@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: pyCZDS
-Version: 1.7.1
+Version: 1.7.3
 Summary: An API client for ICANN's Centralized Zone Data Service (CZDS). Learn more under https://czds.icann.org/.
 Author-email: "Max M. Diez" <pyczds@xdiez.com>
 Project-URL: Homepage, https://github.com/mdiez/pyCZDS
@@ -50,17 +50,17 @@ zonefile_urls = c.get_zonefiles_list()
 ```
 ### 3. From the list of URLs, select the zone file of interest
 ```
-com_zonefile_url = next((url for url in urls if "com.zone" in url), None)
+com_zonefile_url = next((url for url in zonefile_urls if "com.zone" in url), None)
 ```
 ### 4. Optionally, inspect the current header of the selected zonefile
-This is useful if, for example, you have downloaded the same zonefile previously and want to understand if it has been updated in the meantime.
+This is useful if, for example, you have downloaded the zonefile for a zone previously and want to understand if it has been updated in the meantime.
 ```
-from datetime import datetime
+from datetime import datetime, timezone
 
 com_zonefile_headers = c.head_zonefile(com_zonefile_url)
 
 # check if the zonefile is from today
-com_zonefile_headers['parsed']['last-modified'].date() == datetime.now().date()
+com_zonefile_headers['parsed']['last-modified'].date() == datetime.now(timezone.utc).date()
 ```
 ### 5. Download the zonefile
 The following command will download the zone file for the .com zone in the current directory to the file "com.zone".
